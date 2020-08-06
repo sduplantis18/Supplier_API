@@ -31,7 +31,7 @@ class Arena(db.Model):
     id = db.Column(Integer, primary_key = True)
     name = db.Column(String)
     address = db.Column(String)
-    restaurant = relationship('Restaurant', backref='arena', lazy=True)
+    restaurant = relationship('Restaurant', backref='restaurant', lazy=True)
     runner = relationship('Runner', backref='runner', lazy=True)
 
     #inserts a new model into the db
@@ -49,10 +49,17 @@ class Arena(db.Model):
         db.session.update(self)
         db.session.commit()
 
+    def format(self):
+        return {
+        'id': self.id,
+        'name': self.name,
+        'adress': self.address,
+        }
+
 '''
 Define Restaurant Class
 '''
-class Restuarant(db.Model):
+class Restaurant(db.Model):
     __tablename__ = 'restaurants'
     id = db.Column(Integer, primary_key = True)
     name = db.Column(String)
@@ -76,6 +83,16 @@ class Restuarant(db.Model):
     def update(self):
         db.session.update(self)
         db.session.commit()
+    
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'adress': self.address,
+            'arena_id':self.arena_id,
+            'menu':self.menu,
+            'customer':self.customer
+            }
     
 '''
 Define menu class
@@ -136,7 +153,7 @@ class Customer(db.Model):
     name = db.Column(String)
     phone_number = db.Column(String(15))
     restaurant_id = db.Column(Integer, db.ForeignKey('restaurants.id'), nullable = False)
-    order = relationship('Order', backref='order', lazy = True)
+    order = relationship('Order', backref='order_id', lazy = True)
 
     #inserts a new model into the db
     def insert(self):
@@ -160,7 +177,7 @@ class Runner(db.Model):
     __tablename__ = 'runners'
     id = db.Column(Integer, primary_key = True)
     arena_id = db.Column(Integer, db.ForeignKey('arenas.id'), nullable = False)
-    shipment = relationship('Shipment', backref='shipment', lazy = True)
+    shipment = relationship('Shipment', backref='shipment_id', lazy = True)
 
     #inserts a new model into the db
     def insert(self):

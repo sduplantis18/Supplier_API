@@ -58,6 +58,35 @@ def create_app(test_config=None):
         'success': True,
         'name': arena_name
     }), 200
+    
+    '''
+    Select Arena
+    '''
+    @app.route('/arenas/<int:id>', methods=['GET'])
+    def select_arena(id):
+      arena = Arena.query.filter(Arena.id == id).one_or_more()
+
+      if not arena:
+        abort(404)
+
+      return jsonify ({
+        'success':True,
+        'name': arena.format()
+      }), 200
+
+      '''
+      Add restaurant
+      '''
+
+      '''
+      View restaurants within an Arena
+      '''
+
+      
+
+      
+
+
 
   # Error Handling
   '''

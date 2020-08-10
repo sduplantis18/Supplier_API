@@ -56,42 +56,75 @@ def create_app(test_config=None):
     
     return jsonify ({
         'success': True,
-        'name': arena_name
+        'name': arena_name,
+        'address':arena_address
     }), 200
     
-    '''
-    Select Arena
-    '''
-    @app.route('/arenas/<int:id>', methods=['GET'])
-    def select_arena(id):
-      arena = Arena.query.filter(Arena.id == id).one_or_more()
+  '''
+  Select Arena
+  '''
+  @app.route('/arenas/<int:id>', methods=['GET'])
+  def select_arena(id):
+    arena = Arena.query.filter(Arena.id == id).one_or_more()
 
-      if not arena:
-        abort(404)
+    if not arena:
+      abort(404)
 
-      return jsonify ({
-        'success':True,
-        'name': arena.format()
+    return jsonify ({
+      'success':True,
+      'name': arena.format()
       }), 200
 
-      '''
-      Add restaurant
-      '''
-
-      '''
-      View restaurants within an Arena
-      '''
-
-      
-
-      
-
-
-
-  # Error Handling
   '''
-  Example error handling for unprocessable entity
+  Add restaurant
   '''
+  @app.route('/restaurants', methods=['POST'])
+  def create_restaurant():
+        
+    try:
+      body = request.get_json()
+      restaurant_name = body.get('name', None)
+      print(restaurant_name)
+      restaurant_address = body.get('address', None)
+      print(restaurant_address)
+      arena_id = body.get('arena_id', None)
+      print(arena_id)
+    except:
+      abort(422)
+
+    #insert the above data into the database and throw an error in case it fails
+    try:
+      restaurant = Restaurant(name = restaurant_name, address = restaurant_address, arena_id = arena_id)
+      restaurant.insert()
+    except:
+      abort(422)
+        
+    return jsonify ({
+      'success': True,
+      'name': restaurant_name
+    }), 200
+
+    '''
+    View a list of all restaurants within an Arena
+    '''
+  @app.route('/arenas/<int:arena_id>/restaurants', methods=['GET'])
+  def get_restaurants_by_arena(arena_id):
+    #check if arena id is valid 
+    if not arena_id:
+      abort(400)
+        
+    #get list of restaurants associated with the selected arena
+    restaurant_list = Restaurant.query.filter(Restaurant.arena == str(arena_id).all())
+
+    return jsonify ({
+      'success': True,
+      'restaurants':restaurant_list
+    })
+
+    # Error Handling
+    '''
+    Example error handling for unprocessable entity
+    '''
   @app.errorhandler(422)
   def unprocessable(error):
       return jsonify({
@@ -101,13 +134,6 @@ def create_app(test_config=None):
                       }), 422
 
   '''
-  @TODO implement error handlers using the @app.errorhandler(error) decorator
-      each error handler should return (with approprate messages):
-              jsonify({
-                      "success": False, 
-                      "error": 404,
-                      "message": "resource not found"
-                      }), 404
   '''
   @app.errorhandler(404)
   def not_found(error):
@@ -117,8 +143,6 @@ def create_app(test_config=None):
                       "message": "Not Found"
                       }), 404
   '''
-  @TODO implement error handler for 404
-      error handler should conform to general task above 
   '''
   @app.errorhandler(405)
   def method_not_allowed(error):
@@ -127,7 +151,6 @@ def create_app(test_config=None):
           'error': 405,
           'message': 'method not allowed'
       }, 405)
-
 
 
   return app

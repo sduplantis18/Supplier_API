@@ -51,9 +51,9 @@ class Arena(db.Model):
 
     def format(self):
         return {
-        'id': self.id,
-        'name': self.name,
-        'adress': self.address,
+        'arena_id': self.arena_id,
+        'arena_name': self.arena_name,
+        'arena_address': self.arena_address
         }
 
 '''
@@ -86,12 +86,13 @@ class Restaurant(db.Model):
     
     def format(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'adress': self.address,
+            'restaurant_id': self.restaurant_id,
+            'name': self.restaurant_name,
+            'address': self.restaurant_address,
             'arena_id':self.arena_id,
             'menu':self.menu,
-            'customer':self.customer
+            'customer':self.customer,
+            'order':self.order
             }
     
 '''

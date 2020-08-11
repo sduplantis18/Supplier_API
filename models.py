@@ -51,9 +51,9 @@ class Arena(db.Model):
 
     def format(self):
         return {
-        'arena_id': self.arena_id,
-        'arena_name': self.arena_name,
-        'arena_address': self.arena_address
+        'arena_id': self.id,
+        'arena_name': self.name,
+        'arena_address': self.address
         }
 
 '''
@@ -86,9 +86,9 @@ class Restaurant(db.Model):
     
     def format(self):
         return {
-            'restaurant_id': self.restaurant_id,
-            'name': self.restaurant_name,
-            'address': self.restaurant_address,
+            'restaurant_id': self.id,
+            'name': self.name,
+            'address': self.address,
             'arena_id':self.arena_id,
             'menu':self.menu,
             'customer':self.customer,
@@ -102,6 +102,7 @@ Define menu class
 class Menu(db.Model):
     __tablename__ = 'menus'
     id = db.Column(Integer, primary_key = True)
+    name = db.Column(String)
     restaurant_id = db.Column(Integer, db.ForeignKey('restaurants.id'), nullable = False)
     menu_item = relationship('Menu_Item', backref='menu_item', lazy = True)
 
@@ -119,6 +120,14 @@ class Menu(db.Model):
     def update(self):
         db.session.update(self)
         db.session.commit()
+
+    def format(self):
+        return {
+            'id':self.id,
+            'name':self.name,
+            'restaurant_id':self.restaurant_id,
+            'menu_item':self.menu_item
+        }
 
         
 '''

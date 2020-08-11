@@ -65,14 +65,14 @@ def create_app(test_config=None):
   '''
   @app.route('/arenas/<int:id>', methods=['GET'])
   def select_arena(id):
-    arena = Arena.query.filter(Arena.id == id).one_or_more()
+    arena = Arena.query.filter(Arena.id == id).first()
 
     if not arena:
       abort(404)
 
     return jsonify ({
       'success':True,
-      'name': arena.format()
+      'arena': arena.format()
       }), 200
 
   '''
@@ -104,27 +104,72 @@ def create_app(test_config=None):
       'name': restaurant_name
     }), 200
 
-    '''
-    View a list of all restaurants within an Arena
-    '''
-  @app.route('/arenas/<int:arena_id>/restaurants', methods=['GET'])
-  def get_restaurants_by_arena(arena_id):
+  '''
+  View a list of all restaurants within an Arena
+  '''
+  @app.route('/arenas/<int:id>/restaurants', methods=['GET'])
+  def get_restaurants_by_arena(id):
     #check if arena id is valid 
-    if not arena_id:
-      abort(400)
-        
-    #get list of restaurants associated with the selected arena
-    restaurant_list = Restaurant.query.filter(Restaurant.arena == str(arena_id).all())
+    if not id:
+      abort(400)  
+
+    #query for restaurants associated with the above arena id and store in restaurants variable
+    restaurants = Restaurant.query.filter(Restaurant.arena_id == id)
+
+    #loop through restaurants and list out each restaurant associated with the selected arena
+    restaurant_list = [restaurant.format() for restaurant in restaurants]
 
     return jsonify ({
       'success': True,
       'restaurants':restaurant_list
     })
+  
+  '''
+  Add Menu to a restaurant
+  '''
+  @app.route('/menus/create', methods=['POST'])
+  def add_menu():
+    
+    try:
+      body = request.get_json()
+      name = body.get('name', None)
+      restaurant_id = body.get('restaurant_id', None)
+    except:
+      abort(422)
+    
+    try:
+      menu = Menu(name = name, restaurant_id = restaurant_id)
+      menu.insert()
+    except:
+      abort(422)
+    
+    return jsonify ({
+      'success':True,
+      'menu':name
+    }), 200
+    
 
-    # Error Handling
-    '''
-    Example error handling for unprocessable entity
-    '''
+
+  '''
+  Get list of menus by restaurant
+  '''
+
+  '''
+  Add menu items to an existing menu
+  '''
+
+  '''
+  Add a runner
+  '''
+
+  '''
+  add a new customer
+  '''
+
+
+
+
+  # Error Handling
   @app.errorhandler(422)
   def unprocessable(error):
       return jsonify({

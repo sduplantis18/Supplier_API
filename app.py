@@ -2,8 +2,9 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_migrate import Migrate
 
-from models import setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
+from models import db, setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
 
 def create_app(test_config=None):
   # create and configure the app
@@ -125,27 +126,30 @@ def create_app(test_config=None):
     })
   
   '''
-  Add Menu to a restaurant
+  Add new Menu to a restaurant
   '''
   @app.route('/menus/create', methods=['POST'])
   def add_menu():
     
     try:
       body = request.get_json()
-      name = body.get('name', None)
+      menu_name = body.get('name', None)
+      print(menu_name)
       restaurant_id = body.get('restaurant_id', None)
+      print(restaurant_id)
     except:
       abort(422)
     
+    #insert the new record into the database
     try:
-      menu = Menu(name = name, restaurant_id = restaurant_id)
+      menu = Menu(name = menu_name, restaurant_id = restaurant_id)
       menu.insert()
     except:
       abort(422)
     
     return jsonify ({
       'success':True,
-      'menu':name
+      'menu':menu_name
     }), 200
     
 
@@ -200,7 +204,7 @@ def create_app(test_config=None):
 
   return app
 
-db_drop_and_create_all
+
 
 APP = create_app()
 

@@ -10,6 +10,10 @@ database_path = f'postgresql://sdupl:Baller24@localhost:5432/{database_name}'
 
 db = SQLAlchemy()
 
+
+
+
+
 #bind the flask app to a SQLAlchmey service
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"]=database_path
@@ -22,6 +26,7 @@ def setup_db(app, database_path=database_path):
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
+
 
 '''
 Define arena class
@@ -123,8 +128,8 @@ class Menu(db.Model):
 
     def format(self):
         return {
-            'id':self.id,
-            'name':self.name,
+            'menu_id':self.id,
+            'menu_name':self.name,
             'restaurant_id':self.restaurant_id,
             'menu_item':self.menu_item
         }
@@ -153,6 +158,13 @@ class Menu_Item(db.Model):
     def update(self):
         db.session.update(self)
         db.session.commit()
+
+    def format(self):
+        return {
+            'id':self.id,
+            'name':self.name,
+            'menu_id':self.menu_id
+        }
 
 '''
 Define Customer class

@@ -157,6 +157,70 @@ def create_app(test_config=None):
   '''
   Get list of menus by restaurant
   '''
+  @app.route('/restaurants/<int:id>/menus', methods=['GET'])
+  def get_menus(id):
+    #check for vaid id
+    if not id:
+      abort(404)
+    
+    #query the db for the menu associated with the restaurant & store in var
+    menus = Menu.query.filter(Menu.restaurant_id == id)
+
+    #store the retrieved menus in a list
+    menu_list = [menu.format() for menu in menus]
+
+    #return the results in json
+    return jsonify ({
+      'success':True,
+      'menus':menu_list
+    }), 200
+
+  '''
+  remove a menu within a restaurant
+  '''
+  @app.route('/menus/<int:menu_id>', methods=['DELETE'])
+  def remove_menu(menu_id):
+    #check for vaid id
+    menu = Menu.query.filter(Menu.id == menu_id).one_or_none()
+    if not id:
+      abort(404)
+    try:
+      #delete the menu
+      menu.delete()
+    except:
+      abort(422)
+
+    #return the results in json
+    return jsonify ({
+      'success':True,
+      'deleted_menu':menu_id
+    }), 200
+
+  '''
+  Change menu name
+  '''
+  @app.route('/menus/<int:id>/edit', methods=['PATCH'])
+  def edit_menu_name(id):
+    #test to ensure valid id
+    menu = Menu.query.get_or_404(id)
+
+    #get updated menu name from user
+    body = request.get_json()
+    menu_name = body.get('name', None)
+    print(menu_name)
+
+    #update menu in db
+    try:
+      menu = Menu(name = menu_name)
+      menu.update()
+    except:
+      abort(422)
+
+    #return json
+    return jsonify({
+      'success':True,
+      'menu_name':menu_name
+    }), 200
 
   '''
   Add menu items to an existing menu

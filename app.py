@@ -4,9 +4,9 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
-from .auth.auth import AuthError, requires_auth
+from auth import AuthError, requires_auth
 
-from .models import db, setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
+from models import db, setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
 
 def create_app(test_config=None):
   # create and configure the app

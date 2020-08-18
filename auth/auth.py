@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 AUTH0_DOMAIN = 'dev-13pu4hd1.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'restaurant_manager'
+API_AUDIENCE = 'restaurant'
 
 
 ## AuthError Exception

@@ -1,10 +1,12 @@
 import os
+import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
+from .auth.auth import AuthError, requires_auth
 
-from models import db, setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
+from .models import db, setup_db, Arena, Restaurant, Customer, Shipment, Menu, Menu_Item, Order, Runner, db_drop_and_create_all
 
 def create_app(test_config=None):
   # create and configure the app
@@ -24,7 +26,8 @@ def create_app(test_config=None):
   Get list of all arenas
   '''
   @app.route('/arenas', methods=['GET'])
-  def get_arenas():
+  @requires_auth('read:arenas')
+  def get_arenas(jwt):
     arenas = Arena.query.order_by(Arena.id).all()
     total_arenas = len(arenas)
     if total_arenas == 0:
@@ -37,11 +40,14 @@ def create_app(test_config=None):
       'arenas': arena_list 
     }), 200
 
+
+
   '''
   create a new arena
   '''
   @app.route('/arenas', methods=['POST'])
-  def add_arena():
+  @requires_auth('manage:arenas')
+  def add_arena(jwt):
     #get user input for drink name and recipe
     body = request.get_json()
     arena_name = body.get('name', None)
@@ -65,7 +71,8 @@ def create_app(test_config=None):
   Select Arena
   '''
   @app.route('/arenas/<int:id>', methods=['GET'])
-  def select_arena(id):
+  @requires_auth('read:arenas')
+  def select_arena(jwt, id):
     arena = Arena.query.filter(Arena.id == id).first()
 
     if not arena:
@@ -80,7 +87,8 @@ def create_app(test_config=None):
   Add restaurant
   '''
   @app.route('/restaurants', methods=['POST'])
-  def create_restaurant():
+  @requires_auth('add:restaurants')
+  def create_restaurant(jwt):
         
     try:
       body = request.get_json()
@@ -109,7 +117,8 @@ def create_app(test_config=None):
   View a list of all restaurants within an Arena
   '''
   @app.route('/arenas/<int:id>/restaurants', methods=['GET'])
-  def get_restaurants_by_arena(id):
+  @requires_auth('read:restaurants')
+  def get_restaurants_by_arena(jwt, id):
     #check if arena id is valid 
     if not id:
       abort(400)  
@@ -129,7 +138,8 @@ def create_app(test_config=None):
   Add new Menu to a restaurant
   '''
   @app.route('/menus/create', methods=['POST'])
-  def add_menu():
+  @requires_auth('add:menus')
+  def add_menu(jwt):
     
     try:
       body = request.get_json()
@@ -158,7 +168,8 @@ def create_app(test_config=None):
   Get list of menus by restaurant
   '''
   @app.route('/restaurants/<int:id>/menus', methods=['GET'])
-  def get_menus(id):
+  @requires_auth('read:restaurants')
+  def get_menus(jwt, id):
     #check for vaid id
     if not id:
       abort(404)
@@ -179,7 +190,8 @@ def create_app(test_config=None):
   remove a menu within a restaurant
   '''
   @app.route('/menus/<int:menu_id>', methods=['DELETE'])
-  def remove_menu(menu_id):
+  @requires_auth('delete:menus')
+  def remove_menu(jwt, menu_id):
     #check for vaid id
     menu = Menu.query.filter(Menu.id == menu_id).one_or_none()
     if not id:
@@ -200,7 +212,8 @@ def create_app(test_config=None):
   Change menu name
   '''
   @app.route('/menus/<int:id>/edit', methods=['PATCH'])
-  def edit_menu_name(id):
+  @requires_auth('edit:menus')
+  def edit_menu_name(jwt, id):
     #test to ensure valid id
     menu = Menu.query.get_or_404(id)
 
@@ -233,8 +246,6 @@ def create_app(test_config=None):
   '''
   add a new customer
   '''
-
-
 
 
   # Error Handling

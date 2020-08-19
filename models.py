@@ -6,14 +6,11 @@ from flask_migrate import Migrate
 import json
 
 
-#database setup
+#database setup using env variable from heroku
 database_name = "seated"
 database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
-
-
-
 
 
 #bind the flask app to a SQLAlchmey service

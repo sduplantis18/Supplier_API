@@ -5,8 +5,10 @@ from sqlalchemy.orm import relationship
 from flask_migrate import Migrate
 import json
 
+
+#database setup
 database_name = "seated"
-database_path = f'postgresql://sdupl:Baller24@localhost:5432/{database_name}'
+database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
 

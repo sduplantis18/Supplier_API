@@ -8,9 +8,7 @@ from config import bearer_tokens
 from sqlalchemy import desc
 from datetime import date
 
-# Create dict with Authorization key and Bearer token as values. 
-# Later used by test classes as Header
-
+# Create Authorization key and Bearer token as values from config file
 admin_auth_header = {
     'Authorization': bearer_tokens['Admin']
 }
@@ -67,7 +65,7 @@ class RestaurantAPITests(unittest.TestCase):
 
     #test fail for get arena (ensure there are no arenas when running this test)
     def test_get_arena_fail(self):
-        res = self.client().get('/arenas', json = arena, headers = admin_auth_header)
+        res = self.client().get('/arenas', headers = admin_auth_header)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -91,14 +89,14 @@ class RestaurantAPITests(unittest.TestCase):
         self.assertFalse(data['success'])
 
     #test fail for post new restaurant with no auth
-    def test_pass_post_restaurant(self):
+    def test_fail_post_restaurant(self):
 
         restaurant = {
             'name' : "Tropicana Field",
             'address': "123 amalie way"
         }
 
-        res = self.client().post('/restaurants', json = arena)
+        res = self.client().post('/restaurants', json = restaurant)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)

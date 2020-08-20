@@ -84,104 +84,109 @@ python -m unittest discover -t ../
       "name": "Amalie Arena,
       "address": "Test",
       "id": 1
+    },
+    {
+      "name": "Raymond James,
+      "address": "Test",
+      "id": 2
     }
   ],
+  
   "success": true
 }
 
 ```
 
-* GET "/questions?page=1"
-    - Fetches the questions to be displayed on the page using page number
-    - Request Parameters: `page`: Page number
+* GET "/arenas/<int:id>"
+    - Fetches a single arena by the ID
+    - Request Parameters: `id` 
     - Response Body:
 ```json
 {
-  "questions": [{
-    "id": 1,
-    "question": "",
-    "answer": "",
-    "category": 1,
-    "difficulty": 1
-  }],
-  "categories": {
-    "1": "Science",
-    "2": "Art"
-  },
-  "total_questions": 1
+  "arenas": [
+    {
+      "name": "Amalie Arena,
+      "address": "Test",
+      "id": 1
+    }
+  ],
+  
+  "success": true
 }
 ```
 
-* DELETE "/questions/<int:question_id>"
-    - Deletes a question from the database
-    - Request Parameters: `question_id`: Question ID to delete
+* POST "/restaurants"
+    - Posts a new restaurant to the datbase
+    - Request Headers: (application/json) 1. string name (required) 2. string address (required) 3. integer arena_id
+    - Returns:
+```json
+{
+    "name": "McDonalds",
+    "success": true
+}
+```
+
+* GET "/arenas/<int:id>/restaurants"
+    - Fetches all restaurants by arena id
+    - Request Parameters: `arena_id`: arena id for which you want to see a list of restaurants.
     - Response Body:
 ```json
 {
-  "deleted": 20
-}
+  "restaurants": [{
+      "restaurant_id": 1,
+      "name": "McDonalds",
+      "address": "124 amalie way",
+      "arena_id": 1,
+      "menu": "Dinner",
+      "customer":"null",
+      "order": "null"
+  }]
 ```
 
-* POST "/questions"
-    - Adds a questions to the database
+* POST "/menus/create"
+    - Creates a new menu within a
     - Request Body:
 ```json
 {
-  "question": {
-    "id": 1,
-    "question": "",
-    "answer": "",
-    "category": 1,
-    "difficulty": 1
+  "name":"Lunch",
+  "restaurant_id":1
+}
+```
+
+* PATCH "/menus/<int:id>/edit"
+    - Change the name of an existing menu
+    - Request Body:
+```json
+{
+  "name":"Dinner",
+  "restaurant_id":1
+}
+```
+* GET "/restaurants/<int:id>/menus"
+    - Fetches all menus within a restaurant
+    - Request Parameters: `id`: restaurant_id for which you want to see a list of menus.
+    - Response Body:
+```json
+{
+  "menus": [{
+      "menu_id": 1,
+      "menu_name": "Dinner",
+      "restaurant_id": 1,
+      "menu_item": [{
+          "id":1,
+          "name":"Chicken Tenders",
+          "menu_id":1
+      }]
+  }]
+```
+* DELETE "/menus/<int:menu_id>"
+    - Removes the selected menu from the restaurant
+    - Request Parameters: `id`: menu_id for which you want to delete
+    - Response Body:
+```json
+{
+  "deleted_menu": 1,
+  "success" "True"
   }
-}
 ```
 
-* POST "/search"
-    - Fetches questions based on the search term
-    - Request Body:
-```json
-{
-  "questions": [{
-    "id": 1,
-    "question": "",
-    "answer": "",
-    "category": 1,
-    "difficulty": 1
-  }],
-  "total_questions": 1
-}
-```
-
-* GET "/categories/<int:category_id>/questions"
-    - Fetches questions for the requested category
-    - Request Parameters: `category_id`: Category ID for questions
-    - Response Body:
-```json
-{
-  "questions": [{
-    "id": 1,
-    "question": "",
-    "answer": "",
-    "category": 1,
-    "difficulty": 1
-  }],
-  "total_questions": 1,
-  "current_category": 1
-}
-```
-
-* POST "/quizzes"
-    - Fetches a unique question for the quiz on selected category
-    - Request Body:
-```json
-{
-  "question": {
-    "id": 1,
-    "question": "",
-    "answer": "",
-    "category": 1,
-    "difficulty": 1
-  }
-}
-```

@@ -7,7 +7,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 auth0_config = {
     "AUTH0_DOMAIN" : "dev-13pu4hd1.auth0.com",
     "ALGORITHMS" : ["RS256"],
-    "API_AUDIENCE" : "restaurant"
+    "API_AUDIENCE" : "restaurant",
+    "Client_ID" : "DdpON44HPGBS09b7WlBnoOz5zVcyhi4H",
+    "Client_Secret" : "YCLfh0fyN8EUD-LSZ7i1k2A1Os4tAQND7yvXjvFtQlU1psAix9xh3goot_TZXmdU"
 }
 
 

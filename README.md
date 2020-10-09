@@ -1,5 +1,4 @@
-# UdacityCapstone
- 
+
 # Restaurant Manager API for Arena Delivery Business
 
 ## Overview
